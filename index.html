@@ -160,8 +160,6 @@
           <input type="url" id="vk" name="vk" required placeholder="https://vk.com/skrrt" />
           <label for="tg">Ник в Telegram <span class="req">*</span></label>
           <input id="tg" name="tg" required placeholder="@so_fye" />
-          <label for="dob">Дата рождения <span class="req">*</span></label>
-          <input type="text" id="dob" name="dob" required placeholder="18.10.2025" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'" />
           <label for="course">Курс <span class="req">*</span></label>
           <select id="course" name="course" required>
             <option value="">:)</option>
@@ -266,7 +264,6 @@
         fio: form.fio.value.trim(),
         vk: form.vk.value.trim(),
         tg: form.tg.value.trim(),
-        dob: form.dob.value,
         course: form.course.value,
         depositConfirm: (form.depositConfirm.value || ''),
         drink: form.drink.value.trim(),
