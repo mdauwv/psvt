@@ -278,8 +278,7 @@
       try {
         const resp = await fetch(SCRIPT_URL, {
           method: 'POST',
-          mode: 'cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(data)
         });
         if (resp.ok) {
