@@ -243,7 +243,7 @@
 
   <script>
     // URL твоего Apps Script (вставлен)
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-kBJPnL8rGHYLgZAGZ2r27T92gzlJm0adulq4Boe3Vl-SWzs8IVxoa4VrcjBov7Cp/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwOtexiuBhx7uSHZRDyfGH8quiCo0e7VUmsD0siVLuchv9QHFLFJj0aIhB6oe6-nfJ1/exec";
 
     // Простой тост
     const toast = (text, ok=true) => {
@@ -276,11 +276,11 @@
       };
 
       try {
-       const resp = await fetch(SCRIPT_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'text/plain' }, // <= здесь важно
-  body: JSON.stringify(data)
-});
+        const resp = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(data)
+        });
         if (resp.ok) {
           toast('Клубная карта зарегистрирована. С нетерпением ждем встречи!', true);
           form.reset();
