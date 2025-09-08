@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FORM FOR OUR GUESTS — PSVT FD</title>
+  <style>
+    :root{
+      --bg:#000; --ink:#000; --muted:#666; --danger:#d93939;
+      --radius:16px; --shadow:0 8px 30px rgba(0,0,0,.3);
+      --avenir: 'Avenir Next','Avenir','Segoe UI','Inter',system-ui,-apple-system,Roboto,Arial,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{ margin:0; font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--ink); background:#000; position:relative; overflow-x:hidden; }
+    .bg-layer{ position:fixed; inset:-5%; pointer-events:none; z-index:-3; background: radial-gradient(1200px 600px at 20% -10%, rgba(185,22,22,.35), transparent 60%), radial-gradient(900px 700px at 80% 120%, rgba(120,0,0,.4), transparent 70%), radial-gradient(700px 400px at 50% 50%, rgba(255,60,60,.12), transparent 70%); animation: glow 10s ease-in-out infinite alternate; will-change: transform, filter; }
+    .bg-layer.back{ filter: blur(2px) brightness(.9); z-index:-4; opacity:.85 }
+    @keyframes glow{ 0%{ filter:hue-rotate(0deg) brightness(1) } 100%{ filter:hue-rotate(-10deg) brightness(1.05) } }
+    #bg-canvas{ position:fixed; inset:0; z-index:-2; pointer-events:none; will-change: transform; }
+    .wrap{max-width:760px;margin:40px auto;padding:0 24px}
+    .card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    header.hero-banner img{width:100%;display:block;box-shadow:0 8px 20px rgba(0,0,0,0.6)}
+    @font-face { font-family: 'Killig'; src: url('Killig.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'Subheads'; src: url('11894.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }
+    .form-title{ font-family:'Killig',sans-serif; font-size:32px;text-align:center;margin:20px 0 10px }
+    .form-subtitle{ font-family:'Subheads',sans-serif; font-size:16px;line-height:1.6;text-align:center;color:#333; max-width:700px;margin:0 auto 15px }
+    .section-title{ margin:10px 0 6px; font-weight:700; text-transform:uppercase; font-size:14px; letter-spacing:.08em; font-family:'Subheads',sans-serif; display:flex; align-items:center; gap:8px }
+    .suit{ font-size:18px; line-height:1; display:inline-block } .suit.red{ color:#d93939 } .suit.black{ color:#000 }
+    form{padding:0 24px 24px}
+    .narrow{max-width:640px;margin:0 auto}
+    label{display:block;margin-bottom:6px;font-weight:600; font-family: var(--avenir); color:#000; font-size:12px}
+    .option{display:flex;gap:10px;align-items:flex-start;margin:10px 0;color:#000; font:12px/1.5 var(--avenir)}
+    .option input[type="radio"], .option input[type="checkbox"]{flex:0 0 auto;margin-top:2px;accent-color:var(--danger)}
+    .option span{flex:1 1 auto;white-space:normal;word-break:break-word}
+    input:not([type="radio"]):not([type="checkbox"]), select{ width:100%;padding:12px;border-radius:10px;border:1px solid #000; background:#f9f9f9;margin-bottom:12px;color:#000; font:14px/1.4 var(--avenir); }
+    input::placeholder, select::placeholder, textarea::placeholder{ font-family: var(--avenir); font-size:12px; color:#777; }
+    select, option{ font-family: var(--avenir); font-size:12px; }
+    input:not([type="radio"]):not([type="checkbox"]):focus, select:focus{ border-color:var(--danger);outline:none;box-shadow:0 0 0 2px rgba(217,57,57,.25) }
+    .row{margin:12px 0} .req{color:var(--danger)}
+    .btn{padding:12px 18px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+    .btn.primary{background:var(--danger);color:#fff}
+    a.link{color:#0b5be1;text-decoration:underline;cursor:pointer} a.link:hover{text-decoration:none}
+    .disclaimer{ font:11px/1.4 var(--avenir); color: var(--muted); text-align:center; margin: 18px auto 8px; max-width:640px; padding: 0 6px; }
+    .contact{ font:12px/1.4 var(--avenir); color:#777; text-align:center; margin: 22px auto 18px; } .contact a{ color:#d93939; font-weight:600; text-decoration:none; } .contact a:hover{ text-decoration:underline; }
+    /* Toast */
+    .toast{ position: fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(20px); background:#111; color:#fff; border:1px solid #333; padding:14px 16px; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,.5); opacity:0; pointer-events:none; transition:.35s ease; font:14px/1.3 var(--avenir); z-index:1000 }
+    .toast.show{ opacity:1; transform:translateX(-50%) translateY(0) }
+    .toast.ok{ border-color:#1f9432 } .toast.err{ border-color:#c53b3b }
+    .sending{ opacity:.7; pointer-events:none }
+  </style>
+</head>
+<body>
+  <div class="bg-layer back" id="bgBack"></div>
+  <div class="bg-layer" id="bgFront"></div>
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="wrap">
+    <div class="card">
+      <header class="hero-banner">
+        <img src="баннер.png" alt="Banner">
+      </header>
+      <h1 class="form-title">FORM FOR OUR GUESTS</h1>
+      <p class="form-subtitle">
+        Добро пожаловать в эксклюзивный мир азарта, который откроет свои двери в ночь с 18 на 19 октября..<br>
+        Каждому новому гостю требуется завести и оплатить свою клубную карту для прохода.<br>
+        Напоминаем, что мероприятие не предполагает гарантированных спальных мест.<br>
+        До встречи!
+      </p>
+
+      <form id="form">
+        <div class="narrow">
+          <div class="section-title"><span class="suit black">♠</span> Идентификация</div>
+          <label for="fio">Фамилия Имя Отчество <span class="req">*</span></label>
+          <input id="fio" name="fio" required placeholder="фиОтчество тоже" />
+          <label for="vk">Ссылка на VK <span class="req">*</span></label>
+          <input type="url" id="vk" name="vk" required placeholder="https://vk.com/skrrt" />
+          <label for="tg">Ник в Telegram <span class="req">*</span></label>
+          <input id="tg" name="tg" required placeholder="@so_fye" />
+          <label for="dob">Дата рождения <span class="req">*</span></label>
+          <input type="text" id="dob" name="dob" required placeholder="18.10.2025" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'" />
+          <label for="course">Курс <span class="req">*</span></label>
+          <select id="course" name="course" required>
+            <option value="">:)</option>
+            <option>2 бакалавриат</option>
+            <option>3 бакалавриат</option>
+            <option>4 бакалавриат</option>
+            <option>1 магистратура</option>
+            <option>2 магистратура</option>
+            <option>Выпускник</option>
+          </select>
+
+          <div class="section-title"><span class="suit red">♥</span> Дополнительная информация</div>
+          <div class="row">
+            <label>Необходимая сумма внесена? <span class="req">*</span></label>
+            <div class="options">
+              <label class="option"><input type="radio" name="depositConfirm" value="cash" required><span>Да, наличными</span></label>
+              <label class="option"><input type="radio" name="depositConfirm" value="screenshot"><span>Да, скрин отправлен <a href="https://t.me/mdauwv" target="_blank">@mdauwv</a> в тг</span></label>
+            </div>
+          </div>
+          <div class="row">
+            <label for="drink">Любимый напиток?</label>
+            <input id="drink" name="drink" placeholder="Виски+кола" />
+          </div>
+
+          <div class="section-title"><span class="suit red">♦</span> Согласие</div>
+          <div class="options">
+            <label class="option">
+              <input type="checkbox" id="rulesAgree" name="rulesAgree" required>
+              <span>Я ознакомлен(-а) с <a class="link" id="openRules">правилами</a> участия и обязуюсь их соблюдать <span class="req">*</span></span>
+            </label>
+            <label class="option">
+              <input type="checkbox" id="personalData" name="personalData" required>
+              <span>Я даю согласие на обработку моих персональных данных в соответствии с законодательством РФ <span class="req">*</span></span>
+            </label>
+          </div>
+
+          <button id="submitBtn" type="submit" class="btn primary">Зарегистрировать клубную карту</button>
+
+          <p class="disclaimer">
+            Мероприятие PSVT FD является тематическим и носит исключительно развлекательный характер.
+            Использование названий, символики и атрибутики казино служит исключительно художественным элементом
+            и не подразумевает участие в азартных играх.
+          </p>
+        </div>
+      </form>
+    </div>
+    <p class="contact">По всем вопросам: <a href="https://t.me/mdauwv" target="_blank">@mdauwv</a></p>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Правила (модалка убрана в этой версии для краткости демонстрации отправки) -->
+
+  <script>
+    // ====== НАСТРОЙКА: сюда вставишь URL опубликованного Apps Script ======
+    const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+    // Простой тост
+    const toast = (text, ok=true) => {
+      const el = document.getElementById('toast');
+      el.textContent = text;
+      el.className = 'toast ' + (ok ? 'ok' : 'err');
+      requestAnimationFrame(()=> el.classList.add('show'));
+      setTimeout(()=> el.classList.remove('show'), 3800);
+    };
+
+    // Отправка в Google Apps Script (в Google Sheets)
+    const form = document.getElementById('form');
+    const submitBtn = document.getElementById('submitBtn');
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      if(!form.reportValidity()) return;
+      submitBtn.classList.add('sending');
+      submitBtn.disabled = true;
+
+      // Собираем поля -> JSON
+      const data = {
+        fio: form.fio.value.trim(),
+        vk: form.vk.value.trim(),
+        tg: form.tg.value.trim(),
+        dob: form.dob.value,
+        course: form.course.value,
+        depositConfirm: (form.depositConfirm.value || ''),
+        drink: form.drink.value.trim(),
+        rulesAgree: form.rulesAgree.checked,
+        personalData: form.personalData.checked,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        const resp = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        // Если ответ успешный (скрипт вернул 200/JSON) — показываем сообщение
+        if (resp.ok) {
+          toast('Клубная карта зарегистрирована. С нетерпением ждем встречи!', true);
+          form.reset();
+        } else {
+          toast('Не удалось отправить форму. Попробуйте ещё раз.', false);
+        }
+      } catch (err) {
+        toast('Ошибка сети. Попробуйте ещё раз.', false);
+      } finally {
+        submitBtn.classList.remove('sending');
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Фон с мастями (для атмосферности). Можно убрать, если мешает.
+    (function(){
+      const canvas = document.getElementById('bg-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, DPR = Math.max(1, window.devicePixelRatio || 1);
+      const SUITS = ['♠','♥','♦','♣'];
+      const COLORS = { '♠':'rgba(255,255,255,0.10)', '♣':'rgba(255,255,255,0.10)', '♥':'rgba(255,40,40,0.12)', '♦':'rgba(255,40,40,0.12)' };
+      let particles = [];
+      function resize(){ W = canvas.width = Math.floor(window.innerWidth * DPR); H = canvas.height = Math.floor(window.innerHeight * DPR); canvas.style.width = window.innerWidth + 'px'; canvas.style.height = window.innerHeight + 'px'; initParticles(); }
+      function initParticles(){ const count = Math.min(60, Math.floor((window.innerWidth * window.innerHeight)/25000)); particles = new Array(count).fill(0).map(()=>spawn(true)); }
+      function spawn(randomY=false){ const suit = SUITS[Math.floor(Math.random()*SUITS.length)]; const baseSize = 14 + Math.random()*22; const size = baseSize * DPR; return { x: Math.random()*W, y: randomY ? Math.random()*H : -size*2, vy: (20 + Math.random()*30) * DPR / 60, rot: Math.random()*Math.PI*2, vr: (Math.random()*0.004 - 0.002), suit, size }; }
+      function frame(){ ctx.clearRect(0,0,W,H); particles.forEach(p=>{ p.y += p.vy; p.rot += p.vr; if(p.y - p.size > H) Object.assign(p, spawn(false)); ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.font = p.size+'px serif'; ctx.fillStyle = COLORS[p.suit]; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(p.suit, 0, 0); ctx.restore(); }); requestAnimationFrame(frame); }
+      window.addEventListener('resize', resize); resize(); frame();
+    })();
+
+    // Параллакс
+    (function(){
+      const back = document.getElementById('bgBack');
+      const front = document.getElementById('bgFront');
+      const canvas = document.getElementById('bg-canvas');
+      function applyParallax(nx, ny){
+        back.style.transform = `translate(${nx * 10}px, ${ny * 8}px)`;
+        front.style.transform = `translate(${nx * 18}px, ${ny * 12}px)`;
+        canvas.style.transform = `translate(${nx * 12}px, ${ny * 10}px)`;
+      }
+      window.addEventListener('mousemove', (e)=>{
+        const nx = (e.clientX / window.innerWidth) - 0.5;
+        const ny = (e.clientY / window.innerHeight) - 0.5;
+        applyParallax(nx, ny);
+      });
+      window.addEventListener('deviceorientation', (e)=>{
+        if(typeof e.beta !== 'number' || typeof e.gamma !== 'number') return;
+        const nx = Math.max(-0.5, Math.min(0.5, e.gamma / 60));
+        const ny = Math.max(-0.5, Math.min(0.5, e.beta / 120));
+        applyParallax(nx, ny);
+      }, { passive:true });
+    })();
+  </script>
+</body>
+</html>
